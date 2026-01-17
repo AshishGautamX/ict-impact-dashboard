@@ -1,0 +1,91 @@
+{
+  "last_training_data_count": 1066,
+  "current_data_count": 1066,
+  "new_entries_since_training": 0,
+  "last_training_time": "2026-01-18T02:11:08.058426",
+  "last_training_metrics": {
+    "satisfaction_classifier": {
+      "model_type": "XGBoost",
+      "training_accuracy": 0.8814553990610329,
+      "testing_accuracy": 0.7757009345794392,
+      "cv_mean": 0.7795484517592445,
+      "cv_std": 0.005828725972725984,
+      "feature_importance": {
+        "infrastructure_score": 0.29354536533355713,
+        "barrier_score": 0.27171534299850464,
+        "automation_encoded": 0.033781442791223526,
+        "college_encoded": 0.13886651396751404,
+        "awareness_level": 0.0,
+        "weekly_visits": 0.05117058381438255,
+        "training_encoded": 0.13942021131515503,
+        "remote_encoded": 0.0715005174279213
+      },
+      "classes": [
+        "High",
+        "Low",
+        "Medium"
+      ]
+    },
+    "efficiency_regressor": {
+      "model_type": "XGBoost",
+      "training_r2": 0.7814365308770698,
+      "testing_r2": 0.6693699071802024,
+      "training_rmse": 1.2676867555747624,
+      "testing_rmse": 1.5340996117089412,
+      "training_mae": 0.9883868564182604,
+      "testing_mae": 1.2295191878470304,
+      "cv_mean": 0.6824733721595949,
+      "cv_std": 0.012442676939381357,
+      "feature_importance": {
+        "infrastructure_score": 0.2928372025489807,
+        "barrier_score": 0.3909424841403961,
+        "automation_encoded": 0.023533636704087257,
+        "awareness_level": 0.0,
+        "hardware_quality": 0.09932947158813477,
+        "internet_speed": 0.03259700536727905,
+        "digital_collection": 0.02567579597234726,
+        "training_encoded": 0.13508446514606476
+      }
+    },
+    "college_clustering": {
+      "n_clusters": 3,
+      "n_colleges": 9,
+      "cluster_distribution": {
+        "0": 2,
+        "1": 4,
+        "2": 3
+      }
+    },
+    "roi_predictor": {
+      "roi_coefficient": 1.0,
+      "estimated_satisfaction_gain_per_point": 10.0
+    },
+    "enhanced_efficiency_predictor": {
+      "model_type": "Enhanced Ensemble",
+      "r2_score": 0.7440336332093547,
+      "rmse": 1.3498136714416316,
+      "mae": 1.059117804187094,
+      "ensemble_size": 3,
+      "feature_count": 11,
+      "prediction_std_mean": 0.42752915643681955,
+      "confidence_interval_coverage": 0.95
+    },
+    "scenario_simulator": {
+      "model_type": "Scenario Impact Simulator",
+      "satisfaction_impact_r2": 0.4080723849604935,
+      "efficiency_impact_r2": 0.4662916006257416,
+      "scenario_count": 12792,
+      "feature_count": 6,
+      "cost_categories": 5
+    },
+    "recommendation_engine": {
+      "model_type": "AI Recommendation Engine",
+      "recommendation_accuracy": 0.3589473684210527,
+      "priority_r2": 0.9955862683377386,
+      "recommendation_categories": 6,
+      "training_samples": 2850,
+      "feature_count": 9
+    }
+  },
+  "total_training_count": 8
+}
