@@ -300,6 +300,55 @@ ict-impact-dashboard/
 └── README.md                       # This file
 ```
 
+
+## 🧰 Developer / Troubleshooting Notes
+
+If you see "failed to fetch" in the browser when attempting to log in, follow these quick checks:
+
+- Is the backend running? Check the health endpoint:
+
+```powershell
+Invoke-RestMethod 'http://localhost:8000/health'
+# should return: {"status":"healthy"}
+```
+
+- Make sure the frontend and backend origins match CORS settings. By default the backend allows:
+   - http://localhost:5173
+   - http://127.0.0.1:5173
+   - http://localhost:3000
+
+   If you run the frontend on a different port, set the `CORS_ORIGINS` environment variable (comma-separated) before starting the backend:
+
+```powershell
+# Windows (PowerShell)
+$env:CORS_ORIGINS = 'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000'
+# then start backend
+powershell -ExecutionPolicy Bypass -File backend\start-backend.ps1
+```
+
+- The frontend uses `VITE_API_URL` to talk to the API. Set it in the frontend dev environment if your backend runs on a different host/port:
+
+Create a `.env.local` inside `frontend/` with:
+
+```
+VITE_API_URL=http://127.0.0.1:8000
+```
+
+- Report generation imports `matplotlib` and `seaborn`. To avoid startup failures the project now imports those libraries lazily when a report is generated. If you need PDF/Excel charts, install the plotting dependencies in the backend venv:
+
+```powershell
+# activate venv
+& backend\venv\Scripts\Activate.ps1
+pip install -r backend\requirements.txt
+```
+
+If you'd rather not install plotting libs for development, the report generation functions will raise an ImportError only when invoked (and not on server start).
+
+If you'd like, I can also:
+- Add `seaborn` to `backend/requirements.txt` (done),
+- Convert the reports route to import the report generator only when the reports endpoints are called, or
+- Add a small troubleshooting script that checks backend availability and CORS from your dev machine.
+
 ## 🔧 Configuration
 
 ### **Environment Variables**

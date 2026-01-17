@@ -6,7 +6,7 @@ from app.services.db_data_service import get_data_service
 from app.database import get_db
 from app.services.auth_service import get_current_active_user
 from app.models.db_models import User
-from app.utils.report_generator import report_generator
+from app.utils.report_generator import get_report_generator
 from typing import Optional
 import json
 from datetime import datetime
@@ -42,7 +42,8 @@ async def generate_report(
         
         if format.lower() == 'excel':
             # Generate Excel report
-            buffer = report_generator.generate_excel_report(report_data, options.template_id)
+            rg = get_report_generator()
+            buffer = rg.generate_excel_report(report_data, options.template_id)
             filename = f"{options.template_id}-report-{datetime.now().strftime('%Y%m%d')}.xlsx"
             
             return StreamingResponse(
@@ -53,7 +54,8 @@ async def generate_report(
         
         elif format.lower() == 'pdf':
             # Generate PDF report
-            buffer = report_generator.generate_pdf_report(report_data, options.template_id)
+            rg = get_report_generator()
+            buffer = rg.generate_pdf_report(report_data, options.template_id)
             filename = f"{options.template_id}-report-{datetime.now().strftime('%Y%m%d')}.pdf"
             
             return StreamingResponse(

@@ -2,14 +2,19 @@
 Report generation utilities for Excel and PDF exports with charts
 """
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 from io import BytesIO
 import base64
 from typing import Dict, List, Any, Optional
 import json
 from datetime import datetime
 import numpy as np
+
+# NOTE: matplotlib and seaborn are heavy plotting libraries. Import them lazily
+# inside ReportGenerator methods so the module can be imported and the app can
+# start even if plotting libs are not installed. This avoids startup failures
+# when report generation is not used.
+plt = None
+sns = None
 
 try:
     import openpyxl
@@ -43,8 +48,24 @@ class ReportGenerator:
             'ytick.labelsize': 10,
             'legend.fontsize': 10
         }
-        plt.rcParams.update(self.chart_style)
-        sns.set_palette("husl")
+        # Lazy import plotting libraries when an instance is created.
+        # If imports fail, we set flags but allow the application to continue.
+        global plt, sns
+        try:
+            import matplotlib.pyplot as _plt
+            plt = _plt
+            plt.rcParams.update(self.chart_style)
+        except Exception:
+            plt = None
+
+        try:
+            import seaborn as _sns
+            sns = _sns
+            # Only set seaborn palette if seaborn imported and matplotlib present
+            if sns is not None and plt is not None:
+                sns.set_palette("husl")
+        except Exception:
+            sns = None
     
     def generate_excel_report(self, data: Dict[str, Any], template_id: str) -> BytesIO:
         """Generate Excel report with charts"""
@@ -183,6 +204,10 @@ class ReportGenerator:
             return charts
         
         df = pd.DataFrame(data['responses'])
+
+        # Ensure plotting libraries are available
+        if plt is None:
+            raise ImportError("matplotlib is required for chart generation")
         
         # Infrastructure Distribution Chart
         if 'infrastructure' in df.columns:
@@ -293,5 +318,11 @@ class ReportGenerator:
         story.append(Spacer(1, 12))
 
 
-# Global instance
-report_generator = ReportGenerator()
+def get_report_generator() -> 'ReportGenerator':
+    """Factory to obtain a ReportGenerator instance.
+
+    Callers should use get_report_generator() instead of importing a module
+    level instance. This avoids running plotting imports at import time which
+    could prevent the app from starting if plotting libs are missing.
+    """
+    return ReportGenerator()

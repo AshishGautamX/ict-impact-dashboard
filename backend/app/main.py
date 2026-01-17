@@ -23,7 +23,11 @@ async def startup_event():
     print("Application started successfully!")
 
 # CORS configuration
-origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+# Default to common local dev origins (Vite default + 127.0.0.1). Can be overridden with CORS_ORIGINS env var
+default_origins = "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
+origins = os.getenv("CORS_ORIGINS", default_origins).split(",")
+
+print(f"CORS allowed origins: {origins}")
 
 app.add_middleware(
     CORSMiddleware,

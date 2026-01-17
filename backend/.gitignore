@@ -50,3 +50,4 @@ frontend/node_modules/
 # ML artifacts
 backend/ml_models/*.pkl
 backend/ml_models/*.json
+ml_models/training_state.json
