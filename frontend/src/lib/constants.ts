@@ -76,7 +76,33 @@ export const REPORT_TEMPLATES = [
   },
 ];
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Helper to determine API URL with logging
+const getApiUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  const isProd = import.meta.env.PROD;
+  const defaultUrl = 'http://localhost:8000';
+
+  // Use env var if present
+  let url = envUrl || defaultUrl;
+
+  // Log configuration for debugging
+  console.log('🔌 API Configuration:', {
+    environment: isProd ? 'production' : 'development',
+    envVar: envUrl,
+    resolvedUrl: url,
+    origin: window.location.origin
+  });
+
+  // Warn if using localhost in production
+  if (isProd && url.includes('localhost')) {
+    console.warn('⚠️ CRITICAL: Application is running in production mode but VITE_API_URL is missing or set to localhost.');
+    console.warn('Please check your Vercel Environment Variables and ensure you have redeployed.');
+  }
+
+  return url;
+};
+
+export const API_BASE_URL = getApiUrl();
 
 export const SUPABASE_CONFIG = {
   url: import.meta.env.VITE_SUPABASE_URL || '',
