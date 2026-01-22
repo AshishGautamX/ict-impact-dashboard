@@ -1,15 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
+import { API_BASE_URL } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { 
-  FileDown, 
-  FileText, 
-  BarChart3, 
-  PieChart, 
-  TrendingUp, 
+import {
+  FileDown,
+  FileText,
+  BarChart3,
+  PieChart,
+  TrendingUp,
   Users,
   Building2,
   Calendar,
@@ -94,7 +95,7 @@ export function Reports() {
   const generateReport = async (templateId: string, exportFormat: string = 'json') => {
     setGeneratingReport(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/reports/generate?format=${exportFormat}`, {
+      const response = await fetch(`${API_BASE_URL}/api/reports/generate?format=${exportFormat}`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -119,7 +120,7 @@ export function Reports() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      
+
       // Get filename from response headers or create default
       const contentDisposition = response.headers.get('content-disposition');
       let filename = `${templateId}-report-${formatDate(new Date(), 'yyyy-MM-dd')}.${exportFormat}`;
@@ -129,15 +130,15 @@ export function Reports() {
           filename = filenameMatch[1].replace(/['"]/g, '');
         }
       }
-      
+
       a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
-      
+
       toast.success(`${exportFormat.toUpperCase()} report downloaded successfully!`);
-      
+
     } catch (error: any) {
       console.error('Error generating report:', error);
       toast.error(error.message || 'Failed to generate report. Please try again.');
@@ -169,7 +170,7 @@ export function Reports() {
           </p>
         </div>
         <Button onClick={() => {
-          toast.info('Schedule Report feature coming soon!');
+          toast.success('Schedule Report feature coming soon!');
         }}>
           <Calendar className="mr-2 h-4 w-4" />
           Schedule Report
@@ -259,10 +260,10 @@ export function Reports() {
           <div className="grid gap-4 md:grid-cols-3">
             <div>
               <label className="block text-sm font-medium mb-2">Date Range</label>
-              <select 
+              <select
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 value={filters.dateRange}
-                onChange={(e) => setFilters({...filters, dateRange: e.target.value})}
+                onChange={(e) => setFilters({ ...filters, dateRange: e.target.value })}
               >
                 <option value="all">All Time</option>
                 <option value="last-month">Last Month</option>
@@ -272,10 +273,10 @@ export function Reports() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Colleges</label>
-              <select 
+              <select
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 value={filters.colleges}
-                onChange={(e) => setFilters({...filters, colleges: e.target.value})}
+                onChange={(e) => setFilters({ ...filters, colleges: e.target.value })}
               >
                 <option value="all">All Colleges</option>
                 <option value="tier-1">Tier 1 Colleges</option>
@@ -285,10 +286,10 @@ export function Reports() {
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Respondent Type</label>
-              <select 
+              <select
                 className="w-full px-3 py-2 border border-gray-300 rounded-md"
                 value={filters.respondentType}
-                onChange={(e) => setFilters({...filters, respondentType: e.target.value})}
+                onChange={(e) => setFilters({ ...filters, respondentType: e.target.value })}
               >
                 <option value="all">All Respondents</option>
                 <option value="librarian">Librarians</option>
@@ -304,11 +305,10 @@ export function Reports() {
         <h2 className="text-xl font-bold mb-4">Available Report Templates</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {REPORT_TEMPLATES.map((template) => (
-            <Card 
-              key={template.id} 
-              className={`cursor-pointer transition-all hover:shadow-lg ${
-                selectedTemplate === template.id ? 'ring-2 ring-blue-500' : ''
-              }`}
+            <Card
+              key={template.id}
+              className={`cursor-pointer transition-all hover:shadow-lg ${selectedTemplate === template.id ? 'ring-2 ring-blue-500' : ''
+                }`}
               onClick={() => setSelectedTemplate(template.id)}
             >
               <CardContent className="p-6">
@@ -326,19 +326,18 @@ export function Reports() {
                       {template.description}
                     </p>
                     <div className="mt-3">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        template.type === 'summary' ? 'bg-green-100 text-green-800' :
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${template.type === 'summary' ? 'bg-green-100 text-green-800' :
                         template.type === 'detailed' ? 'bg-blue-100 text-blue-800' :
-                        template.type === 'comparative' ? 'bg-purple-100 text-purple-800' :
-                        'bg-orange-100 text-orange-800'
-                      }`}>
+                          template.type === 'comparative' ? 'bg-purple-100 text-purple-800' :
+                            'bg-orange-100 text-orange-800'
+                        }`}>
                         {template.type}
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="mt-4 flex space-x-2">
-                  <Button 
+                  <Button
                     className="flex-1"
                     onClick={(e) => {
                       e.stopPropagation();
@@ -358,7 +357,7 @@ export function Reports() {
                       </>
                     )}
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
                     className="flex-1"
                     onClick={(e) => {
@@ -369,7 +368,7 @@ export function Reports() {
                   >
                     {generatingReport ? 'Generating...' : 'Excel'}
                   </Button>
-                  <Button 
+                  <Button
                     variant="outline"
                     className="flex-1"
                     onClick={(e) => {
@@ -394,8 +393,8 @@ export function Reports() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-20 flex-col"
               onClick={() => generateReport('executive-summary', 'json')}
               disabled={generatingReport}
@@ -403,8 +402,8 @@ export function Reports() {
               <FileDown className="h-6 w-6 mb-2" />
               {generatingReport ? 'Generating...' : 'Export JSON'}
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-20 flex-col"
               onClick={() => generateReport('executive-summary', 'excel')}
               disabled={generatingReport}
@@ -412,8 +411,8 @@ export function Reports() {
               <FileText className="h-6 w-6 mb-2" />
               {generatingReport ? 'Generating...' : 'Export Excel'}
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="h-20 flex-col"
               onClick={() => generateReport('executive-summary', 'pdf')}
               disabled={generatingReport}

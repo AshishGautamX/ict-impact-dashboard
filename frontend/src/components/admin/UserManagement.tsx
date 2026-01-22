@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { API_BASE_URL } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Users, Trash2, UserCheck, UserX, Eye } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -24,7 +25,7 @@ export function UserManagement() {
   const { data: usersData, isLoading } = useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/users`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/users`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -39,7 +40,7 @@ export function UserManagement() {
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}`,
+        `${API_BASE_URL}/api/admin/users/${userId}`,
         {
           method: 'DELETE',
           headers: {
@@ -66,7 +67,7 @@ export function UserManagement() {
   const updateStatusMutation = useMutation({
     mutationFn: async ({ userId, isActive }: { userId: number; isActive: boolean }) => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/users/${userId}/status?is_active=${isActive}`,
+        `${API_BASE_URL}/api/admin/users/${userId}/status?is_active=${isActive}`,
         {
           method: 'PUT',
           headers: {
@@ -94,7 +95,7 @@ export function UserManagement() {
       toast.error('Cannot delete admin users');
       return;
     }
-    
+
     if (confirm(`Are you sure you want to delete user ${user.email} and all their ${user.response_count} responses? This action cannot be undone.`)) {
       deleteUserMutation.mutate(user.id);
     }
@@ -192,23 +193,21 @@ export function UserManagement() {
                 </div>
               </div>
               <div className="flex space-x-2">
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  user.role === 'admin' 
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'admin'
                     ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
                     : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                }`}>
+                  }`}>
                   {user.role}
                 </span>
-                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                  user.is_active 
+                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${user.is_active
                     ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                     : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                }`}>
+                  }`}>
                   {user.is_active ? 'Active' : 'Inactive'}
                 </span>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-3 gap-4 text-sm">
               <div>
                 <div className="text-gray-500 dark:text-gray-400">Responses</div>
@@ -227,7 +226,7 @@ export function UserManagement() {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex flex-wrap gap-2">
               <Button
                 variant="outline"
@@ -308,20 +307,18 @@ export function UserManagement() {
                     </div>
                   </td>
                   <td className="px-2 py-3">
-                    <span className={`inline-flex px-1 py-0.5 text-xs font-semibold rounded ${
-                      user.role === 'admin' 
+                    <span className={`inline-flex px-1 py-0.5 text-xs font-semibold rounded ${user.role === 'admin'
                         ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
                         : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                    }`}>
+                      }`}>
                       {user.role}
                     </span>
                   </td>
                   <td className="px-2 py-3">
-                    <span className={`inline-flex px-1 py-0.5 text-xs font-semibold rounded ${
-                      user.is_active 
+                    <span className={`inline-flex px-1 py-0.5 text-xs font-semibold rounded ${user.is_active
                         ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                         : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-                    }`}>
+                      }`}>
                       {user.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>

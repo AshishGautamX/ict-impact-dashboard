@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { apiClient } from '@/lib/api';
+import { API_BASE_URL } from '@/lib/constants';
 import { useStore } from '@/store/store';
 import toast from 'react-hot-toast';
 import { UserManagement } from '@/components/admin/UserManagement';
@@ -27,7 +28,7 @@ export function Admin() {
   const { data: trainingStatus } = useQuery({
     queryKey: ['training-status'],
     queryFn: async () => {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/training/status`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/training/status`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
@@ -56,7 +57,7 @@ export function Admin() {
   const retrainMutation = useMutation({
     mutationFn: async (force: boolean = false) => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/training/retrain?force=${force}`,
+        `${API_BASE_URL}/api/admin/training/retrain?force=${force}`,
         {
           method: 'POST',
           headers: {

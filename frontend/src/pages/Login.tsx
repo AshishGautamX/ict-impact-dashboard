@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '@/lib/constants';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,7 +25,7 @@ export function Login() {
       formData.append('username', email); // OAuth2 uses 'username' field
       formData.append('password', password);
 
-      const response = await fetch('http://localhost:8000/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         body: formData,
       });
@@ -35,7 +36,7 @@ export function Login() {
       }
 
       const data = await response.json();
-      
+
       // Store token and user info
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -43,7 +44,7 @@ export function Login() {
       setUser(data.user);
 
       toast.success(`Welcome back, ${data.user.username}!`);
-      
+
       // Redirect based on role
       if (data.user.role === 'admin') {
         navigate('/admin');

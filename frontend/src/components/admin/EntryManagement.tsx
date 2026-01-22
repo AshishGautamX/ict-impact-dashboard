@@ -1,12 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { API_BASE_URL } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { 
-  CheckCircle, 
-  XCircle, 
-  Trash2, 
-  Eye, 
+import {
+  CheckCircle,
+  XCircle,
+  Trash2,
+  Eye,
   Filter,
   Clock,
   User,
@@ -47,9 +48,9 @@ export function EntryManagement() {
       if (statusFilter !== 'all') {
         params.append('status', statusFilter);
       }
-      
+
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/entries?${params}`,
+        `${API_BASE_URL}/api/admin/entries?${params}`,
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -66,7 +67,7 @@ export function EntryManagement() {
   const approveMutation = useMutation({
     mutationFn: async (entryId: number) => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/entries/${entryId}/approve`,
+        `${API_BASE_URL}/api/admin/entries/${entryId}/approve`,
         {
           method: 'PUT',
           headers: {
@@ -93,7 +94,7 @@ export function EntryManagement() {
   const rejectMutation = useMutation({
     mutationFn: async ({ entryId, reason }: { entryId: number; reason: string }) => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/entries/${entryId}/reject?reason=${encodeURIComponent(reason)}`,
+        `${API_BASE_URL}/api/admin/entries/${entryId}/reject?reason=${encodeURIComponent(reason)}`,
         {
           method: 'PUT',
           headers: {
@@ -123,7 +124,7 @@ export function EntryManagement() {
   const deleteMutation = useMutation({
     mutationFn: async (entryId: number) => {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/admin/entries/${entryId}`,
+        `${API_BASE_URL}/api/admin/entries/${entryId}`,
         {
           method: 'DELETE',
           headers: {
@@ -326,7 +327,7 @@ export function EntryManagement() {
                     {entry.status}
                   </span>
                 </div>
-                
+
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
@@ -342,7 +343,7 @@ export function EntryManagement() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="text-sm">
                   <div className="text-gray-500 dark:text-gray-400 mb-1">Scores</div>
                   <div className="grid grid-cols-3 gap-2 text-xs">
@@ -351,7 +352,7 @@ export function EntryManagement() {
                     <div>Efficiency: {entry.service_efficiency}</div>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2">
                   {entry.status === 'pending' && (
                     <>
