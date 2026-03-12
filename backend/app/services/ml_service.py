@@ -28,6 +28,41 @@ class MLService:
         self.label_encoders = None
         self.feature_names = None
         
+        # Models set by load_models()
+        self.college_clusterer = None
+        self.roi_predictor = None
+        self.enhanced_efficiency_models = None
+        self.scenario_sat_model = None
+        self.scenario_eff_model = None
+        self.recommendation_classifier = None
+        self.priority_model = None
+        
+        # Scalers
+        self.scaler_nn = None
+        self.scaler_nn_class = None
+        self.enhanced_efficiency_scaler = None
+        
+        # Encoders
+        self.le_satisfaction = None
+        self.le_college = None
+        self.le_automation = None
+        self.le_training = None
+        self.le_remote = None
+        self.recommendation_label_encoder = None
+        
+        # Feature lists
+        self.feature_cols_class = []
+        self.feature_cols_reg = []
+        self.cluster_features = []
+        self.enhanced_efficiency_features = []
+        self.scenario_features = []
+        self.recommendation_features = []
+        
+        # Templates and reference data
+        self.recommendation_templates = {}
+        self.scenario_cost_estimates = {}
+        self.reference_data = {}
+        
         # Try to load models if file exists
         if os.path.exists(model_path):
             self.load_models()

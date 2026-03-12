@@ -1,4 +1,5 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
+from sqlalchemy.orm import Session
 from app.models.schemas import (
     PredictionRequest,
     SatisfactionPrediction,
@@ -6,6 +7,8 @@ from app.models.schemas import (
     ScenarioSimulation,
 )
 from app.services.ml_service import ml_service
+from app.database import get_db
+from app.models.db_models import SurveyResponse as SurveyResponseDB
 
 router = APIRouter()
 
@@ -89,18 +92,56 @@ async def get_college_clusters():
 
 
 @router.get("/recommendations")
-async def get_recommendations(college_id: str = Query(...)):
+async def get_recommendations(
+    college_id: str = Query(...),
+    db: Session = Depends(get_db),
+):
     """Get AI-powered recommendations for a college."""
     try:
-        # In production, fetch actual college data
-        college_data = {
-            'college_id': college_id,
-            'infrastructure_score': 3,
-            'barrier_score': 3,
-            'ict_training_received': False,
-        }
-        
+        from sqlalchemy import func as sqlfunc
+
+        # Fetch real aggregate data for this college from the database
+        row = (
+            db.query(
+                sqlfunc.avg(SurveyResponseDB.infrastructure_score).label("infrastructure_score"),
+                sqlfunc.avg(SurveyResponseDB.barrier_score).label("barrier_score"),
+                sqlfunc.avg(SurveyResponseDB.overall_satisfaction).label("overall_satisfaction"),
+                sqlfunc.avg(SurveyResponseDB.service_efficiency).label("service_efficiency"),
+                sqlfunc.avg(SurveyResponseDB.hardware_quality).label("hardware_quality"),
+                sqlfunc.avg(SurveyResponseDB.software_availability).label("software_availability"),
+                sqlfunc.avg(SurveyResponseDB.internet_speed).label("internet_speed"),
+                sqlfunc.avg(SurveyResponseDB.digital_collection).label("digital_collection"),
+                sqlfunc.avg(SurveyResponseDB.awareness_level).label("awareness_level"),
+            )
+            .filter(SurveyResponseDB.college.contains(college_id))
+            .first()
+        )
+
+        if row and row.infrastructure_score is not None:
+            college_data = {
+                "college_id": college_id,
+                "infrastructure_score": float(row.infrastructure_score),
+                "barrier_score": float(row.barrier_score),
+                "overall_satisfaction": float(row.overall_satisfaction),
+                "service_efficiency": float(row.service_efficiency),
+                "hardware_quality": float(row.hardware_quality),
+                "software_availability": float(row.software_availability),
+                "internet_speed": float(row.internet_speed),
+                "digital_collection": float(row.digital_collection),
+                "awareness_level": float(row.awareness_level),
+                "ict_training_received": False,
+            }
+        else:
+            college_data = {
+                "college_id": college_id,
+                "infrastructure_score": 3,
+                "barrier_score": 3,
+                "overall_satisfaction": 5,
+                "service_efficiency": 5,
+                "ict_training_received": False,
+            }
+
         recommendations = ml_service.get_recommendations(college_data)
-        return {'recommendations': recommendations}
+        return {"recommendations": recommendations}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
