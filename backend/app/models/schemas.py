@@ -102,7 +102,7 @@ class SatisfactionPrediction(BaseModel):
     probabilities: Dict[str, float]
     featureImportance: List[Dict[str, Any]] = Field(alias='feature_importance')
     
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, serialize_by_alias=False)
 
 
 class EfficiencyPrediction(BaseModel):
@@ -111,7 +111,7 @@ class EfficiencyPrediction(BaseModel):
     improvementPotential: float = Field(alias='improvement_potential')
     suggestions: List[str]
     
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, serialize_by_alias=False)
 
 
 class ScenarioSimulation(BaseModel):
@@ -123,7 +123,7 @@ class ScenarioSimulation(BaseModel):
     roi: float
     timelineMonths: int = Field(alias='timeline_months')
     
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, serialize_by_alias=False)
 
 
 class SummaryStatistics(BaseModel):

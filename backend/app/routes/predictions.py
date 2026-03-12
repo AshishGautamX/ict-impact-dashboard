@@ -13,7 +13,7 @@ from app.models.db_models import SurveyResponse as SurveyResponseDB
 router = APIRouter()
 
 
-@router.post("/satisfaction", response_model=SatisfactionPrediction)
+@router.post("/satisfaction", response_model=SatisfactionPrediction, response_model_by_alias=False)
 async def predict_satisfaction(request: PredictionRequest):
     """Predict satisfaction level."""
     try:
@@ -31,7 +31,7 @@ async def predict_satisfaction(request: PredictionRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/efficiency", response_model=EfficiencyPrediction)
+@router.post("/efficiency", response_model=EfficiencyPrediction, response_model_by_alias=False)
 async def predict_efficiency(request: PredictionRequest):
     """Predict service efficiency."""
     try:
@@ -55,7 +55,7 @@ class ScenarioRequest(BaseModel):
     current: PredictionRequest
     proposed: PredictionRequest
 
-@router.post("/scenario", response_model=ScenarioSimulation)
+@router.post("/scenario", response_model=ScenarioSimulation, response_model_by_alias=False)
 async def simulate_scenario(request: ScenarioRequest):
     """Simulate impact of proposed changes."""
     try:
