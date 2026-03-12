@@ -1,6 +1,7 @@
 """
 Authentication service for user and admin login/signup
 """
+import os
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
@@ -21,9 +22,12 @@ except ImportError:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # JWT settings
-SECRET_KEY = "your-secret-key-change-this-in-production-use-env-variable"  # Change in production!
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30 * 24 * 60  # 30 days
+SECRET_KEY = os.getenv("SECRET_KEY", "change-this-default-key-in-production")
+if SECRET_KEY == "change-this-default-key-in-production":
+    import warnings
+    warnings.warn("SECRET_KEY is not set via environment variable. Use a strong random key in production.")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", str(30 * 24 * 60)))  # 30 days
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
